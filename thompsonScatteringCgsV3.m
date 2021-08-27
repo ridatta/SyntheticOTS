@@ -1,5 +1,6 @@
 function [S,shift,u,v,w] = thompsonScatteringCgsV3(ne,z,a,te,ti,u,th,lam_i,rng)
-% Returns TS Spectral Density Function
+% Returns TS Spectral Density Function and the output convolved with the
+% spectrometer response (gaussian function with s.d. = 2 angstorm)
 % This code is based on TS formulas derived by Sheffield et al. 2010 
 %%%%%%%%%
 % INPUTS:
@@ -8,9 +9,9 @@ function [S,shift,u,v,w] = thompsonScatteringCgsV3(ne,z,a,te,ti,u,th,lam_i,rng)
 % a = Ion mass / proton mass[-]
 % te = Electron Temp [eV]
 % ti = Ion DenTemp [eV]
-% u = plasma velocity [cm/s]
+% u = plasma velocity along teh scattering vector [cm/s]
 % th = scattering angle, degrees
-% lam_i = inicident wavelength, [nm]
+% lam_i = incident wavelength, [nm]
 % rng = range of wavelength shift, [angstrong]
 % OUTPUTS:
 % S = spectral density function
@@ -18,6 +19,9 @@ function [S,shift,u,v,w] = thompsonScatteringCgsV3(ne,z,a,te,ti,u,th,lam_i,rng)
 % u = spectrometer response
 % v = Normalized Spectral Denisty Function S / max(S)
 % w = Convolved and Normalized spectral Denisty function
+%%%%%%%%%
+% Example Usage:
+% [S,shift,u,v,w] = thompsonScatteringCgsV3(5e17,6,12,70,70,0,45,532,4)
 %%%%%%%%%
 % Author: Datta, Rishabh. 2021. MIT
 %%%%%%%%%
@@ -66,7 +70,7 @@ end
 
 % Convolve with gaussian function
 v = S/max(S); % normalized spectral denisty
-u = 0.25 * gaussianFn(shift,0,0.2e-10*100); 
+u = 0.25 * gaussianFn(shift,0,0.2e-10*100); % spectrometer response, gaussian function 
 w = conv(v,u','same'); % convolve
 
 % % Plot spectral denisty
