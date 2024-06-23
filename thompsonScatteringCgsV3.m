@@ -48,7 +48,7 @@ mi = A * mp; % ion mass, [g]
 ki = 2 * pi / lambda_i; % incident waveumber [cm^-1]
 FP = FundamentalPlasma(); % Load the fundamental plasma object
 w_pe = FP.getElecPlasmaFreq(n0); % rad/s
-lamD = FP.getDebyeLen(n0,Te); % [cm^-1]
+lamD = sqrt(2) * FP.getDebyeLen(n0,Te); % [cm^-1]
 
 shift = linspace(-rng,rng,100*7.5) * 1e-10 * 100; % wavelength shift, [cm]
 S = zeros(numel(shift),1); 
@@ -105,10 +105,10 @@ end
 
 function out = getSpectralDensity(k,w) % Caluclates the output at a given wavelength
 global Te Ti Z A
-
+addpath(checkDir('/Users/rishabhdatta/Dropbox (MIT)/PUFFIN/Codes/Other/PlasmaFormulary\'));
 FP = FundamentalPlasma(); 
-vthe = FP.getElecThermalVel(Te); 
-vthi = FP.getIonThermalVel(Ti,A); 
+vthe = sqrt(2) * FP.getElecThermalVel(Te); 
+vthi = sqrt(2) * FP.getIonThermalVel(Ti,A); 
 
 chi_e = getChi(k,w,vthe,1); % electron suceptibility
 chi_i = getChi(k,w,vthi,Z); % ion suceptibility
@@ -121,10 +121,10 @@ out = 2 * pi / k *  (abs(1 - chi_e / ep))^2 * fe0(w/k) + ...
     2 * pi * Z / k * (abs(chi_e / ep))^2 * fi0(w/k); 
 end
 
-function out = getChi(k,w,vth,Z) % Get succeptibility
+function out = getChi(k,w,vth,zz) % Get succeptibility
 global lamD Te Ti 
 W = @(z0) 1 + 1i * sqrt(pi) * z0 * exp(-z0^2) - 2 * z0 * dawson(z0); 
-out = 1 / (lamD * k)^2 * (Z * Te / Ti) * W(w/(k * vth)); 
+out = 1 / (lamD * k)^2 * (zz * Te / Ti) * W(w/(k * vth)); 
 end
 
 
